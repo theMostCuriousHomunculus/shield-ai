@@ -16,6 +16,7 @@ import {
 import InputLabel from '../components/InputLabel';
 import PageTitle from '../components/PageTitle';
 import Table from '../components/Table';
+import data from '../data/champions.json';
 
 const Context = createContext<{
 	count: number;
@@ -38,13 +39,13 @@ const ContextProvider: FC<PropsWithChildren> = ({ children }) => {
 			count,
 			query,
 		],
-	)
+	);
 
 	return (
 		<Context value={contextValue}>
 			{children}
 		</Context>
-	)
+	);
 };
 
 const useTheContext = () => {
@@ -69,7 +70,7 @@ const CountButton: FC = () => {
 				{`Increment the count! (The count is ${count})`}
 			</button>
 		</div>
-	)
+	);
 };
 
 const QueryInput: FC = () => {
@@ -89,7 +90,19 @@ const QueryInput: FC = () => {
 			style={{ border: '3px solid black' }}
 			value={query}
 		/>
-	)
+	);
+};
+
+const Tally: FC = () => {
+  console.log('rendering "Tally"');
+  const { query } = useTheContext();
+  return query
+    ? (
+      <p style={{ border: '3px solid black' }}>
+        {`${query} has won ${data.reduce<number>((pv, cv) => cv.Champion === query ? pv + 1 : pv, 0)} championships.`}
+      </p>
+    )
+    : null;
 };
 
 const Component: RouteComponent = () => {
@@ -104,10 +117,12 @@ const Component: RouteComponent = () => {
 
 				<QueryInput />
 
+				<Tally />
+
 				<Table />
 			</main>
 		</ContextProvider>
-	)
+	);
 };
 
 export const Route = createFileRoute('/context')({ component: Component });
